@@ -1,0 +1,9 @@
+// Media Query Mixins
+
+@mixin breakpoint {
+  @media (min-width: $brk-tablet) {@content;}
+}
+
+@mixin breakpoint2 {
+  @media (min-width: $brk-desktop) {@content;}
+}
