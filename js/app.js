@@ -1,41 +1,62 @@
-const list = document.querySelector('.directory-list');
+const container = document.querySelector('.container');
+const index = 0;
 
-function createNode(element) {
-  return document.createElement(element);
-}
-
-function append(parent, element) {
-  return parent.appendChild(element);
-}
-
+// Obtain information from the Random User API
 fetch('https://randomuser.me/api/?results=12')
   .then(response => response.json())
   .then(data => generateInfo(data))
+  .catch(error => console.log("An unexpected error has occured", error))
 
 
-
+// Loop through pulled data, add template literal for each employee with necessary data
 function generateInfo(data) {
-  let info = data.results;
-  return info.map(function(info) {
-    let div = createNode('div');
-    let li = createNode('li');
-    let img = createNode('img');
-    img.src = info.picture.large;
-    div.innerHTML = `
-      <h3>${info.name.first} ${info.name.last}</h3>
-      <p>${info.email}</p>
-      <p>${info.location.city}</p>
+  const employees = data.results;
+  employees.forEach(employee => {
+    container.innerHTML += `
+    <div class="card">
+      <img src=${employee.picture.large}>
+      <div>
+        <h3>${employee.name.first} ${employee.name.last}</h3>
+        <p>${employee.email}</p>
+        <p>${employee.location.city}</p>
+      </div>
+    </div>
     `;
-    append(li, img);
-    append(li, div);
-    append(list, li);
-    li.classList += 'card';
   })
-}
+  container.querySelectorAll('.card').forEach((card, index) => { //Add click event for each employee to create a modal window
+    card.addEventListener('click', () => {
+      generateModal(employees, employees[index], index);
+    });
+  });
+};
 
-//<div>
-  //<h3>${info.name.first} ${info.name.last}</h3>
-  //<p>${info.email}</p>
-  //<p>${info.location.city}</p>
-//</div>
-//`
+
+//Creates modal window and adds data to it
+function generateModal(employees, employee, index) {
+  let modalContainer = document.querySelector('.modal-container');
+  const dob = new Date(Date.parse(employee.dob.date)).toLocaleDateString(navigator.language);
+    modalContainer.innerHTML =
+        `<div class="modal">
+          <div class="modal-info-top">
+            <div>
+              <span class="close">&times;</span>
+            </div>
+            <img src="${employee.picture.large}">
+            <h3>${employee.name.first} ${employee.name.last}</h3>
+            <p>${employee.email}</p>
+            <p>${employee.location.city}</p>
+          </div>
+            <p>${employee.cell}</p>
+            <p>${employee.location.street.number} ${employee.location.street.name}, ${employee.location.state} ${employee.location.postcode}</p>
+            <p>Birthday: ${dob}</p>
+         </div>`
+       ;
+    modalContainer.style.display = "block";
+    const close = document.querySelector('.close'); // Closes modal window
+    close.addEventListener('click', () => {
+      modalContainer.style.display = 'none';
+    })
+    modalContainer.addEventListener('click', () => {
+      modalContainer.style.display = 'none';
+    })
+};
