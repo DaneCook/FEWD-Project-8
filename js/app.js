@@ -25,14 +25,14 @@ function generateInfo(data) {
   })
   container.querySelectorAll('.card').forEach((card, index) => { //Add click event for each employee to create a modal window
     card.addEventListener('click', () => {
-      generateModal(employees, employees[index], index);
+      generateModal(employees[index]);
     });
   });
 };
 
 
 //Creates modal window and adds data to it
-function generateModal(employees, employee, index) {
+function generateModal(employee) {
   let modalContainer = document.querySelector('.modal-container');
   const dob = new Date(Date.parse(employee.dob.date)).toLocaleDateString(navigator.language);
     modalContainer.innerHTML =
